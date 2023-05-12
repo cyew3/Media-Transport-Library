@@ -1,5 +1,7 @@
 name: Windows MSYS2 build
-on: [push, pull_request]
+on:
+  push:
+    - '.github/workflows/msys2_build.yml'
 
 env:
   # Customize the env if
