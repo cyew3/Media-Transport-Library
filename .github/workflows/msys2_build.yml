@@ -1,7 +1,8 @@
 name: Windows MSYS2 build
 on:
   push:
-    - '.github/workflows/msys2_build.yml'
+    paths:
+      - '.github/workflows/msys2_build.yml'
 
 env:
   # Customize the env if
