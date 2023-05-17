@@ -5,9 +5,7 @@ on:
       - .github/workflows/msys2_ffmpeg_build.yml
 jobs:
   build:
-    runs-on: [gasp]
-    container:
-      image: cache-registry.caas.intel.com/cache/library/windows:latest
+    runs-on: windows-latest
     strategy:
       matrix:
         include:
