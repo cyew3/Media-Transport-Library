@@ -48,5 +48,5 @@ jobs:
           cd $HOME
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
-          ./configure --arch=armel --target-os=${{matrix.sys}} --cross-compile=${CROSS_COMPILE} --enable-static --enable-nonfree
+          ./configure --arch=armel --target-os=${{matrix.sys}} --cross-prefix=${CROSS_COMPILE} --enable-static --enable-nonfree
           
