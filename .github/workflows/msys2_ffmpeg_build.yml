@@ -33,5 +33,7 @@ jobs:
             pkg-config:p
       - name: Build FFmpeg
         run: |
-          where make
-          make --version
+          git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
+          cd FFmpeg
+          ./configure --arch=armel --target-os=${{matrix.sys}} --enable-static --enable-nonfree
+          
