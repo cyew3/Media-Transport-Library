@@ -1,0 +1,39 @@
+name: Windows MSYS2 FFmpeg build
+on:
+  push:
+    paths:
+      - .github/workflows/msys2_ffmpeg_build.yml
+jobs:
+  build:
+    runs-on: [gasp]
+    container:
+      image: cache-registry.caas.intel.com/cache/library/windows:latest
+    strategy:
+      matrix:
+        include:
+          - { sys: mingw32, env: i686 }
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Install FFmpeg Packages
+        uses: msys2/setup-msys2@v2.17
+        with:
+          msystem: ${{matrix.sys}}
+          update: true
+          install: >-
+            git
+            base-devel
+            unzip
+          pacboy: >-
+            make:p
+            diffutils:p
+            yasm:p
+            SDL:p
+            gcc:p
+            libx264:p
+            pkg-config:p
+      - name: Build FFmpeg
+        run: |
+          where make
+          make --version
