@@ -35,7 +35,7 @@ jobs:
         run: |
           rm -f arm-gnu-toolchain-12.2.mpacbti-rel1-mingw-w64-i686-arm-none-eabi.zip
           wget https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu/12.2.mpacbti-rel1/binrel/arm-gnu-toolchain-12.2.mpacbti-rel1-mingw-w64-i686-arm-none-eabi.zip
-          unzip -q arm-gnu-toolchain-12.2.mpacbti-rel1-mingw-w64-i686-arm-none-eabi.zip
+          unzip -o arm-gnu-toolchain-12.2.mpacbti-rel1-mingw-w64-i686-arm-none-eabi.zip
           cd arm-gnu-toolchain-12.2.mpacbti-rel1-mingw-w64-i686-arm-none-eabi/bin
           pwd
           ls -al
