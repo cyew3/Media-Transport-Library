@@ -35,11 +35,14 @@ jobs:
         run: |
           env | sort
           cd $HOME
+          ls -al
           wget https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu/12.2.mpacbti-rel1/binrel/arm-gnu-toolchain-12.2.mpacbti-rel1-mingw-w64-i686-arm-none-eabi.zip
           unzip -o arm-gnu-toolchain-12.2.mpacbti-rel1-mingw-w64-i686-arm-none-eabi.zip
           cd arm-gnu-toolchain-12.2.mpacbti-rel1-mingw-w64-i686-arm-none-eabi/bin
-          export PATH=$PWD/arm-none-eabi-:$PATH
-          export CROSS_COMPILE=$PWD/arm-none-eabi-
+          ls -al
+          pwd
+          export PATH=$PWD:$PATH
+          export CROSS_COMPILE=$PWD
           arm-none-eabi-gcc --version
           
           cd $HOME
