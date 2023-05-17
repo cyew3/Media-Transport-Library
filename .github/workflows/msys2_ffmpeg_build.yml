@@ -42,7 +42,7 @@ jobs:
           ls -al
           pwd
           export PATH=$PWD:$PATH
-          export CROSS_COMPILE=$PWD
+          export CROSS_COMPILE="${PWD}/arm-none-eabi-"
           arm-none-eabi-gcc --version
           
           cd $HOME
