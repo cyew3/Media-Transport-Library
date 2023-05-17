@@ -37,9 +37,11 @@ jobs:
           wget https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu/12.2.mpacbti-rel1/binrel/arm-gnu-toolchain-12.2.mpacbti-rel1-mingw-w64-i686-arm-none-eabi.zip
           unzip -o arm-gnu-toolchain-12.2.mpacbti-rel1-mingw-w64-i686-arm-none-eabi.zip
           cd arm-gnu-toolchain-12.2.mpacbti-rel1-mingw-w64-i686-arm-none-eabi/bin
-          echo "${PATH}"
-          ls -al
-          #git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
-          #cd FFmpeg
-          #./configure --arch=armel --target-os=${{matrix.sys}} --cross-compile= --enable-static --enable-nonfree
+          export PATH=$PWD/arm-none-eabi-:$PATH
+          export CROSS_COMPILE=$PWD/arm-none-eabi-
+          arm-none-eabi-gcc --version
+          
+          git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
+          cd FFmpeg
+          ./configure --arch=armel --target-os=${{matrix.sys}} --cross-compile=${CROSS_COMPILE} --enable-static --enable-nonfree
           
