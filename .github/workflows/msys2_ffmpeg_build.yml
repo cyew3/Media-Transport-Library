@@ -47,7 +47,7 @@ jobs:
           cd $HOME
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
-          echo ./configure --arch=${{matix.env}} --target-os=${{matrix.sys}} --cross-prefix=${matrix.env}}-w64-${{matrix.sys}}- --enable-static --enable-nonfree
-          ./configure --arch=${{matix.env}} --target-os=${{matrix.sys}} --cross-prefix=${matrix.env}}-w64-${{matrix.sys}}- --enable-static --enable-nonfree
+          echo ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${matrix.env}}-w64-${{matrix.sys}}- --enable-static --enable-nonfree
+          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${matrix.env}}-w64-${{matrix.sys}}- --enable-static --enable-nonfree
           ls -al
           cat ffbuild/config.log
