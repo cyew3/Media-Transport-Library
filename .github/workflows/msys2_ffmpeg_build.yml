@@ -9,8 +9,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - { sys: mingw32, env: i686 }
-          - { sys: mingw32, env: x86 }
           - { sys: mingw64, env: x86_64 }
     defaults:
       run:
@@ -27,10 +25,13 @@ jobs:
             unzip
           pacboy: >-
             make:p
+            cmake:p
+            meson:p
             diffutils:p
             yasm:p
             SDL:p
             gcc:p
+            toolchain:p
             libx264:p
             pkg-config:p
       - name: Build FFmpeg
@@ -47,7 +48,7 @@ jobs:
           cd $HOME
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
-          echo ./configure --arch=${{ matrix.env }} --target-os=${{ matrix.sys }} --cross-prefix=${{ matrix.env }}-w64-${{ matrix.sys }}- --enable-static --enable-nonfree
-          ./configure --arch=${{ matrix.env }} --target-os=${{ matrix.sys }} --cross-prefix=${{ matrix.env }}-w64-${{ matrix.sys }}- --enable-static --enable-nonfree
+          echo ./configure --arch=${{ matrix.env }} --target-os=${{ matrix.sys }} --cross-prefix=${{ matrix.env }}-w64-${{ matrix.sys }}- --enable-static --enable-nonfree          
+          ./configure --enable-shared --disable-static --enable-debug
           ls -al
           cat ffbuild/config.log
