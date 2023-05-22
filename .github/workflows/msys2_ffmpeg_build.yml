@@ -45,11 +45,11 @@ jobs:
           echo "Build will be perform in ${HOME} on FFmpeg release 4.4"
           cd $HOME
           ls -al /mingw64/bin
-          pacman -U https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gc-8.2.2-1-any.pkg.tar.zst
+          yes | pacman -U https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gc-8.2.2-1-any.pkg.tar.zst
           gcc --version
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
-          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-${{matrix.sys}}- --enable-shared --disable-lto --disable-w32threads
+          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --enable-shared --disable-lto --disable-w32threads
           make -j$(nproc)
           make install
           ls -al /usr/local
