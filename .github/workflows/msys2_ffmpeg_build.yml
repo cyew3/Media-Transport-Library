@@ -29,7 +29,9 @@ jobs:
             meson:p
             diffutils:p
             yasm:p
+            nasm:p
             SDL:p
+            SDL2:p
             gcc:p
             toolchain:p
             libx264:p
@@ -37,13 +39,14 @@ jobs:
       - name: Build FFmpeg
         run: |
           env | sort
+          echo "##########################################################################################################"
+          echo "#                     Perforing Widnows FFmpeg customizations build /w MSYS2                             #"
+          echo "##########################################################################################################"
+          echo "Build will be perform in ${HOME}
           cd $HOME
-          which gcc
-          which link
 
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
-          #ls -al /var/cache/pacman/pkg
-          ./configure --arch=${{ matrix.env }} --target-os=win64 --enable-static --enable-gpl --disable-w32threads       
+          ./configure --target-os=${{ matrix.sys }} --cross-prefix=x86_64-w64-mingw64-
           #./configure --enable-static --enable-gpl --disable-w32threads --disable-autodetect --enable-debug
           #cat ffbuild/config.log
