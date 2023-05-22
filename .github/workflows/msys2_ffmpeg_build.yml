@@ -9,7 +9,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - { sys: mingw64, env: x86_64 }
+          - { sys: mingw64, env: x86_64, arch: x86_64 }
+          - { sys: mingw32, env: x86, arch: i686 }
     defaults:
       run:
         shell: msys2 {0}
@@ -47,6 +48,9 @@ jobs:
 
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
-          ./configure --arch=x86_64 --target-os=mingw64 --cross-prefix=x86_64-w64-mingw64-
+          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-${{matrix.sys}}-
+          #./configure --arch=x86_64 --target-os=mingw64 --cross-prefix=x86_64-w64-mingw64-
+          cat ffbuild/config.log
+          
           #./configure --enable-static --enable-gpl --disable-w32threads --disable-autodetect --enable-debug
-          #cat ffbuild/config.log
+         
