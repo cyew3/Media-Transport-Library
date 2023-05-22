@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - { sys: mingw64, env: x86_64, arch: x86_64 }
+          #- { sys: mingw64, env: x86_64, arch: x86_64 }
           - { sys: mingw32, env: x86, arch: i686 }
     defaults:
       run:
