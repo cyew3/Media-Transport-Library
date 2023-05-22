@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         include:
-          #- { sys: mingw64, env: x86_64, arch: x86_64 }
+          - { sys: mingw, env: x86_64, arch: x86_64 }
           - { sys: mingw32, env: x86, arch: i686 }
     defaults:
       run:
@@ -48,7 +48,7 @@ jobs:
 
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
-          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-${{matrix.sys}}-
+          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-${{matrix.sys}}- --enable-shared
           make -j$(nproc)
           make install
           ls -al /usr/local
