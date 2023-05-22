@@ -21,6 +21,8 @@ jobs:
           git clone https://github.com/FFmpeg/FFmpeg -b release/4.4
           cd FFmpeg
           ./configure --target-os=win64 --arch=x86_64 --toolchain=msvc
+          dir
+          cat ffbuild/config.log
           make
           make install
     
