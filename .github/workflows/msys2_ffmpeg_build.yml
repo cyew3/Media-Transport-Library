@@ -49,6 +49,9 @@ jobs:
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
           ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-${{matrix.sys}}-
+          make -j$(nproc)
+          make install
+          ls -al /usr/local
           #./configure --arch=x86_64 --target-os=mingw64 --cross-prefix=x86_64-w64-mingw64-
           cat ffbuild/config.log
           
