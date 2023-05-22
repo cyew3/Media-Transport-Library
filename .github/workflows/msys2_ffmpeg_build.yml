@@ -47,6 +47,6 @@ jobs:
 
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
-          ./configure --target-os=${{ matrix.sys }} --cross-prefix=x86_64-w64-mingw64-
+          ./configure --arch=x86_64 --target-os=mingw64 --cross-prefix=x86_64-w64-mingw64-
           #./configure --enable-static --enable-gpl --disable-w32threads --disable-autodetect --enable-debug
           #cat ffbuild/config.log
