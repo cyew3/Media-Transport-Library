@@ -38,11 +38,12 @@ jobs:
         run: |
           env | sort
           cd $HOME
-          where cl
-          where link
-          #git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
-          #cd FFmpeg
+          which gcc
+          which link
+
+          git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
+          cd FFmpeg
           #ls -al /var/cache/pacman/pkg
-          #./configure --arch=${{ matrix.env }} --target-os=${{ matrix.sys }} --cross-prefix=${{ matrix.env }}-w64-${{ matrix.sys }}- --enable-static --enable-nonfree          
+          ./configure --arch=${{ matrix.env }} --target-os=win64 --enable-static --enable-gpl --disable-w32threads       
           #./configure --enable-static --enable-gpl --disable-w32threads --disable-autodetect --enable-debug
           #cat ffbuild/config.log
