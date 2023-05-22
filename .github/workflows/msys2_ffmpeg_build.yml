@@ -40,7 +40,8 @@ jobs:
           cd $HOME
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
+          ls -al /var/cache/pacman/pkg
           ./configure --arch=${{ matrix.env }} --target-os=${{ matrix.sys }} --cross-prefix=${{ matrix.env }}-w64-${{ matrix.sys }}- --enable-static --enable-nonfree          
-          #./configure --enable-shared --disable-static --enable-debug
+          #./configure --enable-static --enable-gpl --disable-w32threads --disable-autodetect --enable-debug
           ls -al
           cat ffbuild/config.log
