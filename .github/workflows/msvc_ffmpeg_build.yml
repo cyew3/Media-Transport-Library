@@ -1,0 +1,26 @@
+name: Windows MSVC FFmpeg build
+on:
+  push:
+    paths:
+      - .github/workflows/msvc_ffmpeg_build.yml
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch:
+          - amd64_x86
+          - amd64_arm64
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+      - name: Build FFmpeg /w MSVC toolset
+        run: |
+          git clone https://github.com/FFmpeg/FFmpeg -b release/4.4
+          cd FFmpeg
+          ./configure --target-os=win64 --arch=x86_64 --toolchain=msvc
+          make
+          make install
+    
