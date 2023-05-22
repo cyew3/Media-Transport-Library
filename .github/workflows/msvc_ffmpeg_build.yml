@@ -18,10 +18,12 @@ jobs:
           arch: ${{ matrix.arch }}
       - name: Build FFmpeg /w MSVC toolset
         run: |
+          where cl
+          where link
           git clone https://github.com/FFmpeg/FFmpeg -b release/4.4
           cd FFmpeg
           ./configure --target-os=win64 --arch=x86_64 --toolchain=msvc
-          dir
+          dir ffbuild
           Get-Content ffbuild\config.log
           make
           make install
