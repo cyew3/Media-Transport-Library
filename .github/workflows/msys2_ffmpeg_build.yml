@@ -44,7 +44,8 @@ jobs:
           echo "##########################################################################################################"
           echo "Build will be perform in ${HOME} on FFmpeg release 4.4"
           cd $HOME
-          ls -al /mingw64
+          ls -al /mingw64/bin
+          pacman -U https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gc-8.2.2-1-any.pkg.tar.zst
           gcc --version
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
