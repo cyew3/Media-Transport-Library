@@ -36,6 +36,7 @@ jobs:
             toolchain:p
             libx264:p
             pkg-config:p
+            cross-binutils:p
       - name: Build FFmpeg
         run: |
           env | sort
