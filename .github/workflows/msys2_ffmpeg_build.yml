@@ -9,7 +9,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - { sys: mingw32, env: x86, arch: i686 }
           - { sys: mingw32, env: x86_64, arch: x86_64 }
     defaults:
       run:
@@ -45,6 +44,7 @@ jobs:
           echo "##########################################################################################################"
           echo "Build will be perform in ${HOME} on FFmpeg release 4.4"
           cd $HOME
+          ls -al /mingw64
           gcc --version
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
