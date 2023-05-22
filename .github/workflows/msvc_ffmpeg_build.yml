@@ -22,7 +22,7 @@ jobs:
           cd FFmpeg
           ./configure --target-os=win64 --arch=x86_64 --toolchain=msvc
           dir
-          cat ffbuild/config.log
+          Get-Content ffbuild\config.log
           make
           make install
     
