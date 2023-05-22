@@ -9,8 +9,8 @@ jobs:
     strategy:
       matrix:
         arch:
-          - amd64_x86
-          - amd64_arm64
+          - win64
+          - x86_64
     steps:
       - uses: actions/checkout@v2
       - uses: ilammy/msvc-dev-cmd@v1
