@@ -40,9 +40,9 @@ jobs:
         run: |
           env | sort
           echo "##########################################################################################################"
-          echo "#                     Perforing Widnows FFmpeg customizations build /w MSYS2                             #"
+          echo "#                     Performing Widnows FFmpeg customizations build /w MSYS2                            #"
           echo "##########################################################################################################"
-          echo "Build will be perform in ${HOME}
+          echo "Build will be perform in ${HOME} on FFmpeg release 4.4"
           cd $HOME
 
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
