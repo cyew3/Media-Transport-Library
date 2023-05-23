@@ -123,19 +123,19 @@ jobs:
           echo "INFO: $GITHUB_WORKSPACE/openh264"
           cd ${GITHUB_WORKSPACE}/openh264
           make -j$(nproc) && make install
-          ldconfig
+          echo "INFO: openh264 $?"
           
           cd ${GITHUB_WORKSPACE}/FFmpeg
-          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-gpl --enable-libx264 #--enable-libopenh264 --enable-encoder=libopenh264
-          #make -j$(nproc)
-          #make install
+          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-gpl --enable-libx264 --enable-libopenh264 --enable-encoder=libopenh264
+          make -j$(nproc)
+          make install
+          cat ffbuild/config.log
           
-          #cat ffbuild/config.log
-          #tar -cvzf ffmpeg-mingw64-bin.tgz $HOME/ffmpeg/bin
-          #ls -al $HOME/ffmpeg/bin
+          tar -cvzf ffmpeg-mingw64-bin.tgz $HOME/ffmpeg/bin
+          ls -al
           
-      #- uses: actions/upload-artifact@v3
-      #  with:
-      #    name: Release FFmpeg v4.4 Cross Compile Mingw64 64-bit Binaries
-      #    path: $HOME/ffmpeg/ffmpeg-mingw64-bin.tgz
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Release FFmpeg v4.4 Cross Compile Mingw64 64-bit Binaries
+          path: ${GITHUB_WORKSPACE}/FFmpeg/ffmpeg-mingw64-bin.tgz
          
