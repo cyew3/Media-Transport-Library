@@ -40,6 +40,7 @@ jobs:
             ffnvcodec-headers:p
             libva:p
             clang:p
+            x264:p
       - name: Build FFmpeg
         run: |
           env | sort
@@ -61,7 +62,7 @@ jobs:
           gcc --version
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
-          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads
+          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-gpl --enable-libx264
           make -j$(nproc)
           make install
           ls -al /usr/local
@@ -75,5 +76,5 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Release FFmpeg v4.4 Cross Compile Mingw64 64-bit Binaries
-          path: ffmpeg-mingw64-bin.tgz
+          path: $HOME/FFmpeg/ffmpeg-mingw64-bin.tgz
          
