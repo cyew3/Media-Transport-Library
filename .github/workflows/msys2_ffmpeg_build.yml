@@ -37,6 +37,9 @@ jobs:
             libx264:p
             pkg-config:p
             binutils:p
+            ffnvcodec-headers:p
+            libva:p
+            clang:p
       - name: Build FFmpeg
         run: |
           env | sort
@@ -45,23 +48,32 @@ jobs:
           echo "##########################################################################################################"
           echo "Build will be perform in ${HOME} on FFmpeg release 4.4"
           cd $HOME
+          mkdir -p ${HOME}/ffmpeg
           # Fixes in https://sourceforge.net/p/mingw-w64/mailman/message/29053757/
           cp -f /mingw64/bin/ar.exe /mingw64/bin/x86_64-w64-mingw32-ar.exe
           cp -f /mingw64/bin/strip.exe /mingw64/bin/x86_64-w64-mingw32-strip.exe
           cp -f /mingw64/bin/nm.exe /mingw64/bin/x86_64-w64-mingw32-nm.exe
           cp -f /mingw64/bin/dlltool.exe /mingw64/bin/x86_64-w64-mingw32-dlltool.exe
+          cp -f /mingw64/bin/windres.exe /mingw64/bin/x86_64-w64-mingw32-windres.exe
           ls -al /mingw64/bin
           # Downgrade gcc from 13 to 8.2.2.1
           #yes | pacman -U https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gc-8.2.2-1-any.pkg.tar.zst
           gcc --version
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           cd FFmpeg
-          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --enable-shared --disable-lto --disable-w32threads
+          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads
           make -j$(nproc)
           make install
           ls -al /usr/local
           #./configure --arch=x86_64 --target-os=mingw64 --cross-prefix=x86_64-w64-mingw64-
           cat ffbuild/config.log
+          ls -al $HOME/ffmpeg/bin
+          tar -cvzf ffmpeg-mingw64-bin.tgz $HOME/ffmpeg/bin
           
           #./configure --enable-static --enable-gpl --disable-w32threads --disable-autodetect --enable-debug
+          
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Release FFmpeg v4.4 Cross Compile Mingw64 64-bit Binaries
+          path: ffmpeg-mingw64-bin.tgz
          
