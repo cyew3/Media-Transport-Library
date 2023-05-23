@@ -68,34 +68,34 @@ jobs:
         with:
           repository: 'DPDK/dpdk'
           ref: v${{ env.DPDK_VERSION }}
-          path: ${{ env.GITHUB_WORKSPACE }}\dpdk
+          path: dpdk
           
       - name: Checkout FFMPEG repo
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
           repository: 'FFmpeg/FFmpeg'
           ref: release/4.4
-          path: ${{ env.GITHUB_WORKSPACE }}\FFmpeg
+          path: FFmpeg
        
       - name: Checkout Cisco H264
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
           repository: 'cisco/openh264'
           ref: openh264v2.3.1
-          path: ${{ env.GITHUB_WORKSPACE }}\openh264
+          path: openh264
           
       - name: Checkout mman-win32
-        uses: actions/checkout@master
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
           repository: 'alitrack/mman-win32'
           ref: master
-          path: ${{ env.GITHUB_WORKSPACE }}\mman-win32
+          path: mman-win32
           
       - name: Build FFmpeg
         run: |
           env | sort
           echo "##########################################################################################################"
-          echo "#                     Performing Widnows FFmpeg customizations build /w MSYS2                            #"
+          echo "#                     Performing Windows FFmpeg customizations build /w MSYS2                            #"
           echo "##########################################################################################################"
           echo "Build will be perform in ${HOME} on FFmpeg release 4.4"
           echo "INFO: Checkout repo on runner workspace"
