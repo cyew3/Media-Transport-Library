@@ -56,9 +56,7 @@ jobs:
           unzip -d npcap-sdk npcap-sdk-1.12.zip
           cp npcap-sdk/Lib/x64/* $MSYSTEM_PREFIX/lib/
           
-          # Remove mman-win32 build for now!
-          #git clone https://github.com/alitrack/mman-win32
-          #cd mman-win32
+          #mman-win32
           #./configure --prefix=$MSYSTEM_PREFIX
           #make & make install
           
@@ -70,21 +68,28 @@ jobs:
         with:
           repository: 'DPDK/dpdk'
           ref: v${{ env.DPDK_VERSION }}
-          path: dpdk
+          path: ${{ env.GITHUB_WORKSPACE }}\dpdk
           
       - name: Checkout FFMPEG repo
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
           repository: 'FFmpeg/FFmpeg'
           ref: release/4.4
-          path: FFmpeg
+          path: ${{ env.GITHUB_WORKSPACE }}\FFmpeg
        
       - name: Checkout Cisco H264
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
           repository: 'cisco/openh264'
           ref: openh264v2.3.1
-          path: openh264
+          path: ${{ env.GITHUB_WORKSPACE }}\openh264
+          
+      - name: Checkout mman-win32
+        uses: actions/checkout@master
+        with:
+          repository: 'alitrack/mman-win32'
+          ref: master
+          path: ${{ env.GITHUB_WORKSPACE }}\mman-win32
           
       - name: Build FFmpeg
         run: |
@@ -94,9 +99,7 @@ jobs:
           echo "##########################################################################################################"
           echo "Build will be perform in ${HOME} on FFmpeg release 4.4"
           echo "INFO: Checkout repo on runner workspace"
-          pwd
-          ls -al
-          cd $HOME
+
           mkdir -p ${HOME}/ffmpeg
           
           # Fixes in https://sourceforge.net/p/mingw-w64/mailman/message/29053757/
@@ -105,13 +108,23 @@ jobs:
           cp -f /mingw64/bin/nm.exe /mingw64/bin/x86_64-w64-mingw32-nm.exe
           cp -f /mingw64/bin/dlltool.exe /mingw64/bin/x86_64-w64-mingw32-dlltool.exe
           cp -f /mingw64/bin/windres.exe /mingw64/bin/x86_64-w64-mingw32-windres.exe
-          ls -al /mingw64/bin
+          #ls -al /mingw64/bin
 
-          gcc --version
+          #gcc --version
           #git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
           #cd FFmpeg
           ##./configure --arch=x86_64 --target-os=mingw64 --cross-prefix=x86_64-w64-mingw64-
-          #./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-gpl --enable-libx264 #--enable-libopenh264 --enable-encoder=libopenh264
+          
+          cd ${{ env.GITHUB_WORKSPACE }}\mman-win32
+          ./configure --prefix=${MSYSTEM_PREFIX}
+          make -j$(nproc) && make install
+          
+          cd ${{ env.GITHUB_WORKSPACE }}\openh264
+          make -j$(nproc) && make install
+          ldconfig
+          
+          cd ${{ env.GITHUB_WORKSPACE }}\FFmpeg
+          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-gpl --enable-libx264 #--enable-libopenh264 --enable-encoder=libopenh264
           #make -j$(nproc)
           #make install
           
