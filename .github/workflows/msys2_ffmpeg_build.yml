@@ -3,6 +3,10 @@ on:
   push:
     paths:
       - .github/workflows/msys2_ffmpeg_build.yml
+env:
+  DPDK_VERSION: 23.03
+  MSYS: winjitdebug
+  
 jobs:
   build:
     runs-on: windows-latest
@@ -51,11 +55,15 @@ jobs:
           wget https://nmap.org/npcap/dist/npcap-sdk-1.12.zip
           unzip -d npcap-sdk npcap-sdk-1.12.zip
           cp npcap-sdk/Lib/x64/* $MSYSTEM_PREFIX/lib/
-          git clone https://github.com/alitrack/mman-win32
-          cd mman-win32
-          ./configure --prefix=$MSYSTEM_PREFIX
-          make & make install
+          # Remove mman-win32 build for now!
+          #git clone https://github.com/alitrack/mman-win32
+          #cd mman-win32
+          #./configure --prefix=$MSYSTEM_PREFIX
+          #make & make install
           
+      - name: Checkout IMTL repo
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        
       - name: Checkout DPDK repo
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
