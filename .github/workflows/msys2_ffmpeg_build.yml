@@ -103,6 +103,27 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
+          git am ../patches/dpdk/${{  env.DPDK_VERSION  }}/*.patch
+          git am ../patches/dpdk/${{  env.DPDK_VERSION  }}/windows/*.patch
+
+      - name: Build dpdk
+        run: |
+          cd dpdk
+          meson setup build
+          meson install -C build
+
+      - name: Build IMTL lib
+        run: |
+          meson setup build
+          meson install -C build
+          ls -al build
+          ls -al build/lib
+
+      - name: Build IMTL app
+        run: |
+          cd app
+          meson setup build
+          meson compile -C build
           
       - name: Build FFmpeg
         run: |
@@ -123,9 +144,6 @@ jobs:
           cp -f /mingw64/bin/windres.exe /mingw64/bin/x86_64-w64-mingw32-windres.exe
           #ls -al /mingw64/bin
 
-          #gcc --version
-          #git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
-          #cd FFmpeg
           ##./configure --arch=x86_64 --target-os=mingw64 --cross-prefix=x86_64-w64-mingw64-
           
           cd ${{ env.GITHUB_WORKSPACE }}\mman-win32
@@ -141,9 +159,15 @@ jobs:
           echo "INFO: openh264 $?"
           
           cd ${GITHUB_WORKSPACE}/FFmpeg
-          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-gpl --enable-libx264 --enable-libopenh264 --enable-encoder=libopenh264
+          cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.c ./libavdevice/
+          cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.h ./libavdevice/
+          cp -f ../ecosystem/ffmpeg_plugin/kahawai_dec.c ./libavdevice/
+          cp -f ../ecosystem/ffmpeg_plugin/kahawai_enc.c ./libavdevice/
+          git am --whitespace=fix ../ecosystem/ffmpeg_plugin/0001-avdevice-kahawai-Add-kahawai-input-output-devices.patch
+          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-nonfree --enable-gpl --enable-mtl --enable-pic --enable-libx264 --enable-libopenh264 --enable-encoder=libopenh264
           make -j$(nproc)
           make install
+          echo "INFO: FFmpeg v4.4 $?"
           cat ffbuild/config.log
           
           tar -cvzf ffmpeg-mingw64-bin.tgz $HOME/ffmpeg/bin
@@ -152,5 +176,5 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Release FFmpeg v4.4 Cross Compile Mingw64 64-bit Binaries
-          path: ${GITHUB_WORKSPACE}/FFmpeg/ffmpeg-mingw64-bin.tgz
+          path: ffmpeg-mingw64-bin.tgz
          
