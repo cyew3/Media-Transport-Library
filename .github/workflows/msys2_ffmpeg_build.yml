@@ -46,6 +46,8 @@ jobs:
           echo "Build will be perform in ${HOME} on FFmpeg release 4.4"
           cd $HOME
           ls -al /mingw64/bin
+          # Fixes in https://sourceforge.net/p/mingw-w64/mailman/message/29053757/
+          cp -f /mingw64/bin/ar.exe /mingw64/bin/x86_64-w64-mingw32-ar.exe
           #yes | pacman -U https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gc-8.2.2-1-any.pkg.tar.zst
           gcc --version
           git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
