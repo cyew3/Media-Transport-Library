@@ -119,6 +119,9 @@ jobs:
           ./configure --prefix=${MSYSTEM_PREFIX}
           make -j$(nproc) && make install
           
+          echo "INFO: ${{ env.GITHUB_WORKSPACE }}\openh264"
+          pwd
+          ls -al ../
           cd ${{ env.GITHUB_WORKSPACE }}\openh264
           make -j$(nproc) && make install
           ldconfig
