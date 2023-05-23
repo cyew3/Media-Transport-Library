@@ -5,7 +5,7 @@ on:
       - .github/workflows/msvc_ffmpeg_build.yml
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: self-hosted
     strategy:
       matrix:
         arch:
@@ -24,7 +24,7 @@ jobs:
           cd FFmpeg
           dir .
           echo "INFO: Configuring FFmpeg for Windows with ./configure --target-os=win64 --arch=${{matrix.arch}} --toolchain=msvc"
-          configure --target-os=win64 --arch=${{ matrix.arch }} --toolchain=msvc
+          ./configure --toolchain=msvc
           #dir ffbuild
           #Get-Content ffbuild\config.log
           #make
