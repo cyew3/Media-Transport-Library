@@ -6,7 +6,6 @@ on:
 env:
   DPDK_VERSION: 23.03
   MSYS: winjitdebug
-  PKG_CONFIG_PATH: $PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
   
 jobs:
   build:
@@ -91,6 +90,19 @@ jobs:
           repository: 'alitrack/mman-win32'
           ref: master
           path: mman-win32
+      
+      - name: Convert symlink patch files to real file
+        run: |
+          cd patches/dpdk/${{  env.DPDK_VERSION  }}
+          ls *.patch | xargs -I{} bash -c 'if [[ $(sed -n '1p' "{}") =~ ^../.*\.patch$ ]]; then cp "$(cat "{}")" "{}"; fi'
+          cd windows
+          ls *.patch | xargs -I{} bash -c 'if [[ $(sed -n '1p' "{}") =~ ^../.*\.patch$ ]]; then cp "$(cat "{}")" "{}"; fi'
+      
+      - name: Apply patches for DPDK
+        shell: bash
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           
       - name: Build FFmpeg
         run: |
@@ -124,6 +136,8 @@ jobs:
           echo "INFO: $GITHUB_WORKSPACE/openh264"
           cd ${GITHUB_WORKSPACE}/openh264
           make -j$(nproc) && make install
+          export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
+          echo "INFO: $PKG_CONFIG_PATH"
           echo "INFO: openh264 $?"
           
           cd ${GITHUB_WORKSPACE}/FFmpeg
