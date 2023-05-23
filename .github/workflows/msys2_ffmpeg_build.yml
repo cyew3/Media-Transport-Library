@@ -118,15 +118,14 @@ jobs:
           cd ${{ env.GITHUB_WORKSPACE }}\mman-win32
           ./configure --prefix=${MSYSTEM_PREFIX}
           make -j$(nproc) && make install
+          echo "INFO: mman-win32 $?"
           
-          echo "INFO: ${{ env.GITHUB_WORKSPACE }}\openh264"
-          pwd
-          ls -al ../
-          cd ${{ env.GITHUB_WORKSPACE }}\openh264
+          echo "INFO: $GITHUB_WORKSPACE/openh264"
+          cd ${GITHUB_WORKSPACE}/openh264
           make -j$(nproc) && make install
           ldconfig
           
-          cd ${{ env.GITHUB_WORKSPACE }}\FFmpeg
+          cd ${GITHUB_WORKSPACE}/FFmpeg
           ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-gpl --enable-libx264 #--enable-libopenh264 --enable-encoder=libopenh264
           #make -j$(nproc)
           #make install
