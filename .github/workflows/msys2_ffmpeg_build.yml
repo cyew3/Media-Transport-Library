@@ -6,6 +6,7 @@ on:
 env:
   DPDK_VERSION: 23.03
   MSYS: winjitdebug
+  PKG_CONFIG_PATH: $PKG_CONFIG_PATH:/usr/local/lib/pkg-config
   
 jobs:
   build:
