@@ -55,6 +55,7 @@ jobs:
           wget https://nmap.org/npcap/dist/npcap-sdk-1.12.zip
           unzip -d npcap-sdk npcap-sdk-1.12.zip
           cp npcap-sdk/Lib/x64/* $MSYSTEM_PREFIX/lib/
+          
           # Remove mman-win32 build for now!
           #git clone https://github.com/alitrack/mman-win32
           #cd mman-win32
@@ -77,6 +78,13 @@ jobs:
           repository: 'FFmpeg/FFmpeg'
           ref: release/4.4
           path: FFmpeg
+       
+      - name: Checkout Cisco H264
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        with:
+          repository: 'cisco/openh264'
+          ref: openh264v2.3.1
+          path: openh264
           
       - name: Build FFmpeg
         run: |
@@ -85,9 +93,12 @@ jobs:
           echo "#                     Performing Widnows FFmpeg customizations build /w MSYS2                            #"
           echo "##########################################################################################################"
           echo "Build will be perform in ${HOME} on FFmpeg release 4.4"
+          echo "INFO: Checkout repo on runner workspace"
+          pwd
           ls -al
           cd $HOME
           mkdir -p ${HOME}/ffmpeg
+          
           # Fixes in https://sourceforge.net/p/mingw-w64/mailman/message/29053757/
           cp -f /mingw64/bin/ar.exe /mingw64/bin/x86_64-w64-mingw32-ar.exe
           cp -f /mingw64/bin/strip.exe /mingw64/bin/x86_64-w64-mingw32-strip.exe
@@ -95,23 +106,21 @@ jobs:
           cp -f /mingw64/bin/dlltool.exe /mingw64/bin/x86_64-w64-mingw32-dlltool.exe
           cp -f /mingw64/bin/windres.exe /mingw64/bin/x86_64-w64-mingw32-windres.exe
           ls -al /mingw64/bin
-          # Downgrade gcc from 13 to 8.2.2.1
-          #yes | pacman -U https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gc-8.2.2-1-any.pkg.tar.zst
+
           gcc --version
-          git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
-          cd FFmpeg
-          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-gpl --enable-libx264
-          make -j$(nproc)
-          make install
-          ls -al /usr/local
-          #./configure --arch=x86_64 --target-os=mingw64 --cross-prefix=x86_64-w64-mingw64-
-          cat ffbuild/config.log
-          tar -cvzf ffmpeg-mingw64-bin.tgz $HOME/ffmpeg/bin
-          ls -al $HOME/ffmpeg/bin
-          #./configure --enable-static --enable-gpl --disable-w32threads --disable-autodetect --enable-debug
+          #git clone https://github.com/FFmpeg/FFmpeg.git -b release/4.4
+          #cd FFmpeg
+          ##./configure --arch=x86_64 --target-os=mingw64 --cross-prefix=x86_64-w64-mingw64-
+          #./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-gpl --enable-libx264 #--enable-libopenh264 --enable-encoder=libopenh264
+          #make -j$(nproc)
+          #make install
           
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Release FFmpeg v4.4 Cross Compile Mingw64 64-bit Binaries
-          path: $HOME/ffmpeg/ffmpeg-mingw64-bin.tgz
+          #cat ffbuild/config.log
+          #tar -cvzf ffmpeg-mingw64-bin.tgz $HOME/ffmpeg/bin
+          #ls -al $HOME/ffmpeg/bin
+          
+      #- uses: actions/upload-artifact@v3
+      #  with:
+      #    name: Release FFmpeg v4.4 Cross Compile Mingw64 64-bit Binaries
+      #    path: $HOME/ffmpeg/ffmpeg-mingw64-bin.tgz
          
