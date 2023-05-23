@@ -101,6 +101,7 @@ jobs:
       - name: Apply patches for DPDK
         shell: bash
         run: |
+          cd dpdk
           git config user.name github-actions
           git config user.email github-actions@github.com
           git am ../patches/dpdk/${{  env.DPDK_VERSION  }}/*.patch
