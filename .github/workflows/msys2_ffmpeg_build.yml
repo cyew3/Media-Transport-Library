@@ -49,6 +49,7 @@ jobs:
           cp -f /mingw64/bin/ar.exe /mingw64/bin/x86_64-w64-mingw32-ar.exe
           cp -f /mingw64/bin/strip.exe /mingw64/bin/x86_64-w64-mingw32-strip.exe
           cp -f /mingw64/bin/nm.exe /mingw64/bin/x86_64-w64-mingw32-nm.exe
+          cp -f /mingw64/bin/dlltool.exe /mingw64/bin/x86_64-w64-mingw32-dlltool.exe
           ls -al /mingw64/bin
           # Downgrade gcc from 13 to 8.2.2.1
           #yes | pacman -U https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gc-8.2.2-1-any.pkg.tar.zst
