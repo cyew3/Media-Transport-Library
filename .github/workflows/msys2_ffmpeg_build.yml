@@ -9,7 +9,7 @@ env:
   
 jobs:
   build:
-    runs-on: [ windows-latest, Windows ]
+    runs-on: [ gcove-runner ]
     strategy:
       matrix:
         include:
