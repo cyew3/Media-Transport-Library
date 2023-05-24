@@ -161,7 +161,7 @@ jobs:
           
           cd ${GITHUB_WORKSPACE}/FFmpeg
           git branch -a
-          git checkout 4.4
+          git checkout release/4.4
           git reset --hard aa28df74ab197c49a05fecc40c81e0f8ec4ad0c3
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.c ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.h ./libavdevice/
