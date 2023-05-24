@@ -102,8 +102,8 @@ jobs:
         shell: bash
         run: |
           cd dpdk
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           git am ../patches/dpdk/${{  env.DPDK_VERSION  }}/*.patch
           git am ../patches/dpdk/${{  env.DPDK_VERSION  }}/windows/*.patch
 
@@ -148,11 +148,10 @@ jobs:
           cp -f /mingw64/bin/nm.exe /mingw64/bin/x86_64-w64-mingw32-nm.exe
           cp -f /mingw64/bin/dlltool.exe /mingw64/bin/x86_64-w64-mingw32-dlltool.exe
           cp -f /mingw64/bin/windres.exe /mingw64/bin/x86_64-w64-mingw32-windres.exe
-          #ls -al /mingw64/bin
+          #ls -al /mingw64/bin          
 
-          ##./configure --arch=x86_64 --target-os=mingw64 --cross-prefix=x86_64-w64-mingw64-
-          
-
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           
           echo "INFO: $GITHUB_WORKSPACE/openh264"
           cd ${GITHUB_WORKSPACE}/openh264
