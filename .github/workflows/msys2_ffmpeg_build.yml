@@ -154,15 +154,13 @@ jobs:
           cd ${GITHUB_WORKSPACE}/openh264
           make -j$(nproc) && make install
           export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
-          echo "INFO: $PKG_CONFIG_PATH"
           echo "INFO: openh264 $?"
           
           git config --global user.name github-actions
           git config --global user.email github-actions@github.com
-          git config -l
           
           cd ${GITHUB_WORKSPACE}/FFmpeg
-          git reset --hard aa28df74ab197c49a05fecc40c81e0f8ec4ad0c3
+          git branch -a
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.c ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.h ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_dec.c ./libavdevice/
@@ -172,6 +170,7 @@ jobs:
           ls -al libavdevice/
           git am --whitespace=fix ../ecosystem/ffmpeg_plugin/0001-avdevice-kahawai-Add-kahawai-input-output-devices.patch
           git am --show-current-patch=diff
+          git status
           cat configure
           
           ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-nonfree --enable-gpl --enable-mtl --enable-pic --enable-libx264 --enable-libopenh264 --enable-encoder=libopenh264
