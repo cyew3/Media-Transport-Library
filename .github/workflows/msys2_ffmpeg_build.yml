@@ -9,7 +9,7 @@ env:
   
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: [ windows-latest, self-hosted ]
     strategy:
       matrix:
         include:
@@ -50,15 +50,12 @@ jobs:
             json-c:p
             libpcap:p
             dlfcn:p
+            
       - name: Install tools
         run: |
           wget https://nmap.org/npcap/dist/npcap-sdk-1.12.zip
           unzip -d npcap-sdk npcap-sdk-1.12.zip
           cp npcap-sdk/Lib/x64/* $MSYSTEM_PREFIX/lib/
-          
-          #mman-win32
-          #./configure --prefix=$MSYSTEM_PREFIX
-          #make & make install
           
       - name: Checkout IMTL repo
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
@@ -70,6 +67,7 @@ jobs:
           ref: v${{ env.DPDK_VERSION }}
           path: dpdk
           
+      # TODO: DPDK patches failed to apply    
       #- name: Checkout FFMPEG repo
       #  uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
       #  with:
@@ -123,7 +121,6 @@ jobs:
           cd ${{ env.GITHUB_WORKSPACE }}\mman-win32
           ./configure --prefix=${MSYSTEM_PREFIX}
           make -j$(nproc) && make install
-          echo "INFO: mman-win32 $?"
           
       - name: Build IMTL app
         run: |
@@ -131,15 +128,31 @@ jobs:
           meson setup build
           meson compile -C build
           
+      - name: Build IMTL plugins
+        run: |
+          cd plugins
+          meson setup build
+          meson install -C build
+
+      - name: Build IMTL lib with TAP
+        run: |
+          meson setup tap_build -Denable_tap=true
+          meson install -C tap_build
+          
+      - name: Build Openh264
+        run: |
+          cd ${GITHUB_WORKSPACE}/openh264
+          make -j$(nproc) && make install
+          
       - name: Build FFmpeg
         run: |
           env | sort
           echo "##########################################################################################################"
           echo "#                     Performing Windows FFmpeg customizations build /w MSYS2                            #"
           echo "##########################################################################################################"
-          echo "Build will be perform in ${HOME} on FFmpeg release 4.4"
-          echo "INFO: Checkout repo on runner workspace"
-
+          export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
           mkdir -p ${HOME}/ffmpeg
           
           # Fixes in https://sourceforge.net/p/mingw-w64/mailman/message/29053757/
@@ -149,16 +162,7 @@ jobs:
           cp -f /mingw64/bin/dlltool.exe /mingw64/bin/x86_64-w64-mingw32-dlltool.exe
           cp -f /mingw64/bin/windres.exe /mingw64/bin/x86_64-w64-mingw32-windres.exe
           #ls -al /mingw64/bin          
-          
-          echo "INFO: $GITHUB_WORKSPACE/openh264"
-          cd ${GITHUB_WORKSPACE}/openh264
-          make -j$(nproc) && make install
-          export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
-          echo "INFO: openh264 $?"
-          
-          git config --global user.name github-actions
-          git config --global user.email github-actions@github.com
-          
+
           cd ${GITHUB_WORKSPACE}
           git clone https://git.ffmpeg.org/ffmpeg.git FFmpeg
           cd FFmpeg
@@ -168,24 +172,21 @@ jobs:
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.h ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_dec.c ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_enc.c ./libavdevice/
-          #git status
-          git diff
-          #ls -al ../ecosystem/ffmpeg_plugin
-          ls -al libavdevice/
-          #git am --abort
           git am --whitespace=fix ../ecosystem/ffmpeg_plugin/0001-avdevice-kahawai-Add-kahawai-input-output-devices.patch
           
           ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-nonfree --enable-gpl --enable-mtl --enable-pic --enable-libx264 --enable-libopenh264 --enable-encoder=libopenh264
           make -j$(nproc)
           make install
-          echo "INFO: FFmpeg v4.4 $?"
+
           cat ffbuild/config.log
           
+          ls -al $HOME/ffmpeg
+          ls -al $HOME/ffmpeg/lib/
+          ls -al $HOME/ffmpeg/bin/          
           tar -cvzf ffmpeg-mingw64-bin.tgz $HOME/ffmpeg/bin
-          ls -al
           
       - uses: actions/upload-artifact@v3
         with:
           name: Release FFmpeg v4.4 Cross Compile Mingw64 64-bit Binaries
-          path: ffmpeg-mingw64-bin.tgz
+          path: FFmpeg/ffmpeg-mingw64-bin.tgz
          
