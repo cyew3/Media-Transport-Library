@@ -149,9 +149,6 @@ jobs:
           cp -f /mingw64/bin/dlltool.exe /mingw64/bin/x86_64-w64-mingw32-dlltool.exe
           cp -f /mingw64/bin/windres.exe /mingw64/bin/x86_64-w64-mingw32-windres.exe
           #ls -al /mingw64/bin          
-
-          git config user.name github-actions
-          git config user.email github-actions@github.com
           
           echo "INFO: $GITHUB_WORKSPACE/openh264"
           cd ${GITHUB_WORKSPACE}/openh264
@@ -159,6 +156,10 @@ jobs:
           export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
           echo "INFO: $PKG_CONFIG_PATH"
           echo "INFO: openh264 $?"
+          
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
+          git config -l
           
           cd ${GITHUB_WORKSPACE}/FFmpeg
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.c ./libavdevice/
