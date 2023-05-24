@@ -70,12 +70,12 @@ jobs:
           ref: v${{ env.DPDK_VERSION }}
           path: dpdk
           
-      - name: Checkout FFMPEG repo
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-        with:
-          repository: 'FFmpeg/FFmpeg'
-          ref: release/4.4
-          path: FFmpeg
+      #- name: Checkout FFMPEG repo
+      #  uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+      #  with:
+      #    repository: 'FFmpeg/FFmpeg'
+      #    ref: release/4.4
+      #    path: FFmpeg
        
       - name: Checkout Cisco H264
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
@@ -159,7 +159,9 @@ jobs:
           git config --global user.name github-actions
           git config --global user.email github-actions@github.com
           
-          cd ${GITHUB_WORKSPACE}/FFmpeg
+          cd ${GITHUB_WORKSPACE}
+          git clone https://git.ffmpeg.org/ffmpeg.git FFmpeg
+          cd FFmpeg
           git branch -a
           git checkout release/4.4
           git reset --hard aa28df74ab197c49a05fecc40c81e0f8ec4ad0c3
