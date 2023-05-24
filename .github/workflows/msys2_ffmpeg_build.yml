@@ -117,9 +117,14 @@ jobs:
         run: |
           meson setup build
           meson install -C build
-          ls -al build
-          ls -al build/lib
-
+          
+      - name: Build IMTL app dependency
+        run: | 
+          cd ${{ env.GITHUB_WORKSPACE }}\mman-win32
+          ./configure --prefix=${MSYSTEM_PREFIX}
+          make -j$(nproc) && make install
+          echo "INFO: mman-win32 $?"
+          
       - name: Build IMTL app
         run: |
           cd app
@@ -147,10 +152,7 @@ jobs:
 
           ##./configure --arch=x86_64 --target-os=mingw64 --cross-prefix=x86_64-w64-mingw64-
           
-          cd ${{ env.GITHUB_WORKSPACE }}\mman-win32
-          ./configure --prefix=${MSYSTEM_PREFIX}
-          make -j$(nproc) && make install
-          echo "INFO: mman-win32 $?"
+
           
           echo "INFO: $GITHUB_WORKSPACE/openh264"
           cd ${GITHUB_WORKSPACE}/openh264
