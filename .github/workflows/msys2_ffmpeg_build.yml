@@ -162,17 +162,17 @@ jobs:
           cd ${GITHUB_WORKSPACE}
           git clone https://git.ffmpeg.org/ffmpeg.git FFmpeg
           cd FFmpeg
-          git branch -a
           git checkout release/4.4
           git reset --hard aa28df74ab197c49a05fecc40c81e0f8ec4ad0c3
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.c ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.h ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_dec.c ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_enc.c ./libavdevice/
-          git status
-          ls -al ../ecosystem/ffmpeg_plugin
+          #git status
+          git diff
+          #ls -al ../ecosystem/ffmpeg_plugin
           ls -al libavdevice/
-          git am --abort
+          #git am --abort
           git am --whitespace=fix ../ecosystem/ffmpeg_plugin/0001-avdevice-kahawai-Add-kahawai-input-output-devices.patch
           
           ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-nonfree --enable-gpl --enable-mtl --enable-pic --enable-libx264 --enable-libopenh264 --enable-encoder=libopenh264
