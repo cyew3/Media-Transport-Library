@@ -162,11 +162,14 @@ jobs:
           git config -l
           
           cd ${GITHUB_WORKSPACE}/FFmpeg
+          git reset --hard aa28df74ab197c49a05fecc40c81e0f8ec4ad0c3
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.c ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.h ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_dec.c ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_enc.c ./libavdevice/
+          git status
           ls -al ../ecosystem/ffmpeg_plugin
+          ls -al libavdevice/
           git am --whitespace=fix ../ecosystem/ffmpeg_plugin/0001-avdevice-kahawai-Add-kahawai-input-output-devices.patch
           git am --show-current-patch=diff
           cat configure
