@@ -161,6 +161,8 @@ jobs:
           
           cd ${GITHUB_WORKSPACE}/FFmpeg
           git branch -a
+          git checkout 4.4
+          git reset --hard aa28df74ab197c49a05fecc40c81e0f8ec4ad0c3
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.c ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.h ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_dec.c ./libavdevice/
@@ -168,10 +170,8 @@ jobs:
           git status
           ls -al ../ecosystem/ffmpeg_plugin
           ls -al libavdevice/
+          git am --abort
           git am --whitespace=fix ../ecosystem/ffmpeg_plugin/0001-avdevice-kahawai-Add-kahawai-input-output-devices.patch
-          git am --show-current-patch=diff
-          git status
-          cat configure
           
           ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-nonfree --enable-gpl --enable-mtl --enable-pic --enable-libx264 --enable-libopenh264 --enable-encoder=libopenh264
           make -j$(nproc)
