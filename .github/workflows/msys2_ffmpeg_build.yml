@@ -155,7 +155,7 @@ jobs:
           export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
           git config --global user.name github-actions
           git config --global user.email github-actions@github.com
-          mkdir -p ${HOME}/ffmpeg
+          mkdir -p ${HOME}/ffmpeg/lib
           
           # Fixes in https://sourceforge.net/p/mingw-w64/mailman/message/29053757/
           cp -f /mingw64/bin/ar.exe /mingw64/bin/x86_64-w64-mingw32-ar.exe
