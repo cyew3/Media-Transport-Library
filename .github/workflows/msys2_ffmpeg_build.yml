@@ -184,7 +184,7 @@ jobs:
 
           cat ffbuild/config.log
           
-          cp -f /mingw64/lib/* $HOME/ffmpeg/bin
+          cp -f /mingw64/lib/*.dll* $HOME/ffmpeg/bin
           cp -f ../build/lib/libmtl.dll $HOME/ffmpeg/bin
           cp -f ../build/lib/libmtl.dll.a $HOME/ffmpeg/bin
           
