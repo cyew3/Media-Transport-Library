@@ -118,7 +118,7 @@ jobs:
           meson install -C build
           ls -al build/lib
           zip -r imtl-dll.zip build/lib
-          ls -al /mingw64/lib/libva*
+          ls -al /mingw64/lib/
           
       - name: Build IMTL app dependency
         run: | 
@@ -184,8 +184,7 @@ jobs:
 
           cat ffbuild/config.log
           
-          cp -f /mingw64/lib/libva_win32.dll.a $HOME/ffmpeg/bin
-          cp -f /mingw64/lib/libva.dll.a $HOME/ffmpeg/bin
+          cp -f /mingw64/lib/* $HOME/ffmpeg/bin
           cp -f ../build/lib/libmtl.dll $HOME/ffmpeg/bin
           cp -f ../build/lib/libmtl.dll.a $HOME/ffmpeg/bin
           
