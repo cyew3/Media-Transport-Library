@@ -27,6 +27,7 @@ jobs:
             git
             base-devel
             unzip
+            zip
           pacboy: >-
             make:p
             cmake:p
