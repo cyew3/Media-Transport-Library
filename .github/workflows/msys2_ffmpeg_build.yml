@@ -43,7 +43,7 @@ jobs:
             ffnvcodec-headers:p
             libva:p
             clang:p
-            x264:p
+            libx264:p
             openssl:p
             gcc:p
             meson:p
@@ -116,9 +116,7 @@ jobs:
         run: |
           meson setup build
           meson install -C build
-          ls -al build/lib
           zip -r imtl-dll.zip build/lib
-          ls -al /mingw64/lib/
           
       - name: Build IMTL app dependency
         run: | 
@@ -184,7 +182,8 @@ jobs:
 
           cat ffbuild/config.log
           
-          cp -f /mingw64/lib/*.dll* $HOME/ffmpeg/bin
+          cp -f /mingw64/lib/*.dll* $HOME/ffmpeg/lib
+          cp -f /mingw64/lib/*.a $HOME/ffmpeg/lib
           cp -f /mingw64/bin/*.dll* $HOME/ffmpeg/bin
           cp -f ../build/lib/libmtl.dll $HOME/ffmpeg/bin
           cp -f ../build/lib/libmtl.dll.a $HOME/ffmpeg/bin
@@ -192,12 +191,19 @@ jobs:
           ls -al $HOME/ffmpeg
           ls -al $HOME/ffmpeg/lib/
           ls -al $HOME/ffmpeg/bin/          
-          tar -cvzf ffmpeg-mingw64-bin.tgz $HOME/ffmpeg/bin
+          #tar -cvzf ffmpeg-mingw64-bin.tgz $HOME/ffmpeg/bin
+          zip -r ffmpeg-mingw64-bin.zip $HOME/ffmpeg/bin
+          zip -f ffmpeg-mingw64-lib.zip $HOME/ffmpeg/lib
           
       - uses: actions/upload-artifact@v3
         with:
           name: Release FFmpeg v4.4 Cross Compile Mingw64 64-bit Binaries
-          path: FFmpeg/ffmpeg-mingw64-bin.tgz
+          path: FFmpeg/ffmpeg-mingw64-bin.zip
+          
+      - uses actions/upload-artifact@v3
+        with:
+          name: Release Mingw64 lib files
+          path: FFmpeg/ffmpeg-mingw64-lib.zip
       
       - uses: actions/upload-artifact@v3
         with:
