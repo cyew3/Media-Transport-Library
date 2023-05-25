@@ -184,6 +184,11 @@ jobs:
 
           cat ffbuild/config.log
           
+          cp -f /mingw64/lib/libva_win32.dll.a $HOME/ffmpeg/bin
+          cp -f /mingw64/lib/libva.dll.a $HOME/ffmpeg/bin
+          cp -f ../build/lib/libmtl.dll $HOME/ffmpeg/bin
+          cp -f ../build/lib/libmtl.dll.a $HOME/ffmpeg/bin
+          
           ls -al $HOME/ffmpeg
           ls -al $HOME/ffmpeg/lib/
           ls -al $HOME/ffmpeg/bin/          
@@ -198,4 +203,3 @@ jobs:
         with:
           name: Intel MTL DLL libraries
           path: imtl-dll.zip
-         
