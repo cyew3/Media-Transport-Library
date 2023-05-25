@@ -200,7 +200,7 @@ jobs:
           name: Release FFmpeg v4.4 Cross Compile Mingw64 64-bit Binaries
           path: FFmpeg/ffmpeg-mingw64-bin.zip
           
-      - uses actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v3
         with:
           name: Release Mingw64 lib files
           path: FFmpeg/ffmpeg-mingw64-lib.zip
