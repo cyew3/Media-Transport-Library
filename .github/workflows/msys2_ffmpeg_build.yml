@@ -115,6 +115,9 @@ jobs:
         run: |
           meson setup build
           meson install -C build
+          ls -al build/lib
+          zip -r imtl-dll.zip build/lib
+          ls -al /mingw64/lib/libva*
           
       - name: Build IMTL app dependency
         run: | 
@@ -189,4 +192,9 @@ jobs:
         with:
           name: Release FFmpeg v4.4 Cross Compile Mingw64 64-bit Binaries
           path: FFmpeg/ffmpeg-mingw64-bin.tgz
+      
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Intel MTL DLL libraries
+          path: imtl-dll.zip
          
