@@ -5,6 +5,7 @@ on:
       - .github/workflows/msys2_ffmpeg_build.yml
 env:
   DPDK_VERSION: 23.03
+  FFMPEG_VERSION: 4.4
   MSYS: winjitdebug
   
 jobs:
@@ -67,14 +68,6 @@ jobs:
           repository: 'DPDK/dpdk'
           ref: v${{ env.DPDK_VERSION }}
           path: dpdk
-          
-      # TODO: DPDK patches failed to apply    
-      #- name: Checkout FFMPEG repo
-      #  uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-      #  with:
-      #    repository: 'FFmpeg/FFmpeg'
-      #    ref: release/4.4
-      #    path: FFmpeg
        
       - name: Checkout Cisco H264
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
@@ -155,7 +148,7 @@ jobs:
           cp -f /mingw64/bin/strip.exe /mingw64/bin/x86_64-w64-mingw32-strip.exe
           cp -f /mingw64/bin/windres.exe /mingw64/bin/x86_64-w64-mingw32-windres.exe
           
-      - name: Build FFmpeg
+      - name: Build FFmpeg v${{env.FFMPEG_VERSION}}
         run: |
           #env | sort
           echo "##########################################################################################################"
@@ -179,8 +172,12 @@ jobs:
           ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared \
           --disable-lto --disable-w32threads --enable-nonfree --enable-gpl --enable-mtl --enable-pic --enable-libx264 --enable-libopenh264 --enable-encoder=libopenh264
           make -j$(nproc)
+          echo "INFO: FFmpeg Compiled Successfully: $?"
           make install
 
+          export PATH=$HOME/ffmpeg/bin:$PATH
+          ffmpeg -version
+          ffmpeg -framerate 60 -pixel_format yuv422p10le -width 1920 -height 1080 -udp_port 20000 -port 0000:31:00.0 -local_addr "192.168.96.2" -src_addr "239.168.85.20" -dma_dev "0000:00:01.0" -ext_frames_mode 1 -f kahawai -i "k" -vframes 2000 -f rawvideo /dev/null -y"
           cat ffbuild/config.log
           
           #cp -rf /mingw64/lib/*.dll* $HOME/ffmpeg/lib
@@ -191,14 +188,14 @@ jobs:
           
           # Archive artifacts
           #tar -cvzf ffmpeg-mingw64-bin.tgz $HOME/ffmpeg/bin
-          zip -r ffmpeg-mingw64.zip $HOME/ffmpeg
           #zip -f ffmpeg-mingw64-lib.zip $HOME/ffmpeg/lib
+          zip -r ffmpeg-mingw64.zip $HOME/ffmpeg
           zip -r imtl-dll.zip ../build/lib
           
       - uses: actions/upload-artifact@v3
         with:
           name: Release FFmpeg v4.4 Cross Compile Mingw64 64-bit Binaries
-          path: FFmpeg/ffmpeg-mingw64-bin.zip
+          path: FFmpeg/ffmpeg-mingw64.zip
           
       #- uses: actions/upload-artifact@v3
       #  with:
