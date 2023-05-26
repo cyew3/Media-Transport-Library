@@ -116,8 +116,7 @@ jobs:
         run: |
           meson setup build
           meson install -C build
-          zip -r imtl-dll.zip build/lib
-          
+                    
       - name: Build IMTL app dependency
         run: | 
           cd ${{ env.GITHUB_WORKSPACE }}\mman-win32
@@ -141,31 +140,32 @@ jobs:
           meson setup tap_build -Denable_tap=true
           meson install -C tap_build
           
-      - name: Build Openh264
+      - name: Build OpenH264
         run: |
-          cd ${GITHUB_WORKSPACE}/openh264
+          cd openh264
           make -j$(nproc) && make install
+          
+      - name: Fix mingw64 binutils 
+        run: |
+          # Fixes in https://sourceforge.net/p/mingw-w64/mailman/message/29053757/
+          #ls -al /mingw64/bin
+          cp -f /mingw64/bin/ar.exe /mingw64/bin/x86_64-w64-mingw32-ar.exe
+          cp -f /mingw64/bin/dlltool.exe /mingw64/bin/x86_64-w64-mingw32-dlltool.exe
+          cp -f /mingw64/bin/nm.exe /mingw64/bin/x86_64-w64-mingw32-nm.exe
+          cp -f /mingw64/bin/strip.exe /mingw64/bin/x86_64-w64-mingw32-strip.exe
+          cp -f /mingw64/bin/windres.exe /mingw64/bin/x86_64-w64-mingw32-windres.exe
           
       - name: Build FFmpeg
         run: |
-          env | sort
+          #env | sort
           echo "##########################################################################################################"
           echo "#                     Performing Windows FFmpeg customizations build /w MSYS2                            #"
           echo "##########################################################################################################"
           export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
           git config --global user.name github-actions
           git config --global user.email github-actions@github.com
-          mkdir -p ${HOME}/ffmpeg/lib
-          
-          # Fixes in https://sourceforge.net/p/mingw-w64/mailman/message/29053757/
-          cp -f /mingw64/bin/ar.exe /mingw64/bin/x86_64-w64-mingw32-ar.exe
-          cp -f /mingw64/bin/strip.exe /mingw64/bin/x86_64-w64-mingw32-strip.exe
-          cp -f /mingw64/bin/nm.exe /mingw64/bin/x86_64-w64-mingw32-nm.exe
-          cp -f /mingw64/bin/dlltool.exe /mingw64/bin/x86_64-w64-mingw32-dlltool.exe
-          cp -f /mingw64/bin/windres.exe /mingw64/bin/x86_64-w64-mingw32-windres.exe
-          #ls -al /mingw64/bin          
-
-          cd ${GITHUB_WORKSPACE}
+          #mkdir -p ${HOME}/ffmpeg/lib
+          #cd ${GITHUB_WORKSPACE}
           git clone https://git.ffmpeg.org/ffmpeg.git FFmpeg
           cd FFmpeg
           git checkout release/4.4
@@ -176,36 +176,36 @@ jobs:
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_enc.c ./libavdevice/
           git am --whitespace=fix ../ecosystem/ffmpeg_plugin/0001-avdevice-kahawai-Add-kahawai-input-output-devices.patch
           
-          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-nonfree --enable-gpl --enable-mtl --enable-pic --enable-libx264 --enable-libopenh264 --enable-encoder=libopenh264
+          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared \
+          --disable-lto --disable-w32threads --enable-nonfree --enable-gpl --enable-mtl --enable-pic --enable-libx264 --enable-libopenh264 --enable-encoder=libopenh264
           make -j$(nproc)
           make install
 
           cat ffbuild/config.log
           
-          cp -rf /mingw64/lib/*.dll* $HOME/ffmpeg/lib
-          cp -rf /mingw64/lib/*.a $HOME/ffmpeg/lib
-          cp -rf /mingw64/bin/*.dll* $HOME/ffmpeg/bin
-          cp -f ../build/lib/libmtl.dll $HOME/ffmpeg/bin
-          cp -f ../build/lib/libmtl.dll.a $HOME/ffmpeg/bin
+          #cp -rf /mingw64/lib/*.dll* $HOME/ffmpeg/lib
+          #cp -rf /mingw64/lib/*.a $HOME/ffmpeg/lib
+          #cp -rf /mingw64/bin/*.dll* $HOME/ffmpeg/bin
+          #cp -f ../build/lib/libmtl.dll $HOME/ffmpeg/bin
+          #cp -f ../build/lib/libmtl.dll.a $HOME/ffmpeg/bin
           
-          ls -al $HOME/ffmpeg
-          ls -al $HOME/ffmpeg/lib/
-          ls -al $HOME/ffmpeg/bin/          
+          # Archive artifacts
           #tar -cvzf ffmpeg-mingw64-bin.tgz $HOME/ffmpeg/bin
-          zip -r ffmpeg-mingw64-bin.zip $HOME/ffmpeg/bin
-          zip -f ffmpeg-mingw64-lib.zip $HOME/ffmpeg/lib
+          zip -r ffmpeg-mingw64.zip $HOME/ffmpeg
+          #zip -f ffmpeg-mingw64-lib.zip $HOME/ffmpeg/lib
+          zip -r imtl-dll.zip ../build/lib
           
       - uses: actions/upload-artifact@v3
         with:
           name: Release FFmpeg v4.4 Cross Compile Mingw64 64-bit Binaries
           path: FFmpeg/ffmpeg-mingw64-bin.zip
           
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Release Mingw64 lib files
-          path: FFmpeg/ffmpeg-mingw64-lib.zip
+      #- uses: actions/upload-artifact@v3
+      #  with:
+      #    name: Release Mingw64 lib files
+      #    path: FFmpeg/ffmpeg-mingw64-lib.zip
       
       - uses: actions/upload-artifact@v3
         with:
           name: Intel MTL DLL libraries
-          path: imtl-dll.zip
+          path: FFmpeg/imtl-dll.zip
