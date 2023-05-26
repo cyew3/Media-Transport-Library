@@ -177,7 +177,7 @@ jobs:
 
           export PATH=$HOME/ffmpeg/bin:$PATH
           ffmpeg -version
-          ffmpeg -framerate 60 -pixel_format yuv422p10le -width 1920 -height 1080 -udp_port 20000 -port 0000:31:00.0 -local_addr "192.168.96.2" -src_addr "239.168.85.20" -dma_dev "0000:00:01.0" -ext_frames_mode 1 -f kahawai -i "k" -vframes 2000 -f rawvideo /dev/null -y"
+          #ffmpeg -framerate 60 -pixel_format yuv422p10le -width 1920 -height 1080 -udp_port 20000 -port 0000:31:00.0 -local_addr "192.168.96.2" -src_addr "239.168.85.20" -dma_dev "0000:00:01.0" -ext_frames_mode 1 -f kahawai -i "k" -vframes 2000 -f rawvideo /dev/null -y"
           cat ffbuild/config.log
           
           #cp -rf /mingw64/lib/*.dll* $HOME/ffmpeg/lib
