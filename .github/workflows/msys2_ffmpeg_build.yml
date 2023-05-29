@@ -178,8 +178,8 @@ jobs:
           make install
           cat ffbuild/config.log
           
-          export PATH=$HOME/ffmpeg/bin:$PATH
-          ffmpeg -version
+          #export PATH=$HOME/ffmpeg/bin:$PATH
+          #ffmpeg -version
           
           #cp -rf /mingw64/lib/*.dll* $HOME/ffmpeg/lib
           #cp -rf /mingw64/lib/*.a $HOME/ffmpeg/lib
