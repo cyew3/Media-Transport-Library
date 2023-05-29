@@ -147,6 +147,11 @@ jobs:
           cp -f /mingw64/bin/nm.exe /mingw64/bin/x86_64-w64-mingw32-nm.exe
           cp -f /mingw64/bin/strip.exe /mingw64/bin/x86_64-w64-mingw32-strip.exe
           cp -f /mingw64/bin/windres.exe /mingw64/bin/x86_64-w64-mingw32-windres.exe
+      
+      - name: Setup Git Global Config
+        run: |
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
           
       - name: Build FFmpeg v${{env.FFMPEG_VERSION}}
         run: |
@@ -154,31 +159,27 @@ jobs:
           echo "##########################################################################################################"
           echo "#                     Performing Windows FFmpeg customizations build /w MSYS2                            #"
           echo "##########################################################################################################"
+          
           export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
-          git config --global user.name github-actions
-          git config --global user.email github-actions@github.com
-          #mkdir -p ${HOME}/ffmpeg/lib
-          #cd ${GITHUB_WORKSPACE}
-          git clone https://git.ffmpeg.org/ffmpeg.git FFmpeg
-          cd FFmpeg
+          git clone https://git.ffmpeg.org/ffmpeg.git FFmpeg && cd FFmpeg
           git checkout release/4.4
           git reset --hard aa28df74ab197c49a05fecc40c81e0f8ec4ad0c3
+          
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.c ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_common.h ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_dec.c ./libavdevice/
           cp -f ../ecosystem/ffmpeg_plugin/kahawai_enc.c ./libavdevice/
           git am --whitespace=fix ../ecosystem/ffmpeg_plugin/0001-avdevice-kahawai-Add-kahawai-input-output-devices.patch
           
-          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared \
-          --disable-lto --disable-w32threads --enable-nonfree --enable-gpl --enable-mtl --enable-pic --enable-libx264 --enable-libopenh264 --enable-encoder=libopenh264
+          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=${HOME}/ffmpeg --enable-shared --disable-lto --disable-w32threads --enable-nonfree --enable-gpl --enable-mtl --enable-pic --enable-libx264 --enable-libopenh264 --enable-encoder=libopenh264
           make -j$(nproc)
+          
           echo "INFO: FFmpeg Compiled Successfully: $?"
           make install
-
+          cat ffbuild/config.log
+          
           export PATH=$HOME/ffmpeg/bin:$PATH
           ffmpeg -version
-          #ffmpeg -framerate 60 -pixel_format yuv422p10le -width 1920 -height 1080 -udp_port 20000 -port 0000:31:00.0 -local_addr "192.168.96.2" -src_addr "239.168.85.20" -dma_dev "0000:00:01.0" -ext_frames_mode 1 -f kahawai -i "k" -vframes 2000 -f rawvideo /dev/null -y"
-          cat ffbuild/config.log
           
           #cp -rf /mingw64/lib/*.dll* $HOME/ffmpeg/lib
           #cp -rf /mingw64/lib/*.a $HOME/ffmpeg/lib
