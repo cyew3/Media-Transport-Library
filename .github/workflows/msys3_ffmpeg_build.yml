@@ -22,8 +22,9 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          echo y | pacman -Syuu --noconfirm git base-devel unzip pactoys
+          echo y | pacman -Su --noconfirm git base-devel unzip pactoys
           pacboy -S openssl:p gcc:p meson:p pkg-config:p json-c:p libpcap:p gtest:p SDL2:p SDL2_ttf:p dlfcn:p
+          pacman -Syuu
           
       - name: Checkout IMTL repo
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
