@@ -54,8 +54,8 @@ jobs:
           which git
           which bash
           which make
+          
       - name: Convert symlink patch files to real file
-        shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
         run: |
           cd Media-Transport-Library/patches/dpdk/${{env.DPDK_VERSION}}
           ls *.patch | xargs -I{} bash -c 'if [[ $(sed -n '1p' "{}") =~ ^../.*\.patch$ ]]; then cp "$(cat "{}")" "{}"; fi'
@@ -63,7 +63,6 @@ jobs:
           ls *.patch | xargs -I{} bash -c 'if [[ $(sed -n '1p' "{}") =~ ^../.*\.patch$ ]]; then cp "$(cat "{}")" "{}"; fi'
           
       - name: Apply patches for DPDK
-        shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
         run: |
           cd dpdk
           git reset --hard
@@ -72,44 +71,44 @@ jobs:
           git config user.email github-actions@github.com
           git am ../Media-Transport-Library/patches/dpdk/${{env.DPDK_VERSION}}/*.patch
           git am ../Media-Transport-Library/patches/dpdk/${{env.DPDK_VERSION}}/windows/*.patch
+          
       - name: Build dpdk
-        shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
         run: |
           cd dpdk
           meson setup build
           meson install -C build
+          
       - name: Build IMTL lib
-        shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
         run: |
           cd Media-Transport-Library
+          mkdir -p dpdk/lib/eal/windows/include
+          mkdir -p dpdk/lib/kni
+          cp -rf ../dpdk/lib/eal/windows/include/* dpdk/lib/eal/windows/include
+          cp -rf ../dpdk/lib/kni/* dpdk/lib/kni
           meson setup build
           meson install -C build
                     
       - name: Build IMTL app dependency
-        shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
         run: | 
          #export PATH=/c/msys64/mingw64/bin:/c/msys64/bin:$PATH
          cd mman-win32
-          ./configure --prefix=/${MSYSTEM_PREFIX}
+          ./configure --prefix=${MSYSTEM_PREFIX}
           make -j$(nproc) && make install
           
       - name: Build IMTL app
-        shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
         run: |
-          #export PATH=/c/msys64/mingw64/bin:$PATH
           cd Media-Transoport-Library/app
           meson setup build
           meson compile -C build
           
       - name: Build IMTL plugins
-        shell: C:\msys64\mingw64.exe {0}
         run: |
-          #export PATH=/c/msys64/usr/bin:$PATH
           cd Media-Transport-Library/plugins
           meson setup build
           meson install -C build
+          
       - name: Build IMTL lib with TAP
-        shell: C:\msys64\mingw64.exe {0}
+        #shell: C:\msys64\mingw64.exe {0}
         run: |
           #export PATH=/c/msys64/usr/bin:$PATH
           cd  Media-Transport-Library
