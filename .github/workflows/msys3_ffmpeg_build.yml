@@ -1,0 +1,111 @@
+name: Windows Self-Hosted MSYS2 FFmpeg build
+on:
+  push:
+    paths:
+      - .github/workflows/msys3_ffmpeg_build.yml
+env:
+  DPDK_VERSION: 23.03
+  FFMPEG_VERSION: 4.4
+  MSYSTEM_PREFIX: mingw64
+  MSYS: winjitdebug
+  
+jobs:
+  build:
+    runs-on: [ self-hosted ]
+    strategy:
+      matrix:
+        include:
+          - { sys: mingw64, env: x86_64, arch: x86_64 }
+    defaults:
+      run:
+        shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
+    steps:     
+      - name: Checkout IMTL repo
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        with:
+          repository: 'OpenVisualCloud/Media-Transport-Library'
+          ref: main
+          path: Media-Transport-Library
+          
+      - name: Checkout DPDK repo
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        with:
+          repository: 'DPDK/dpdk'
+          ref: v${{env.DPDK_VERSION}}
+          path: dpdk
+          clean: true
+ 
+      - name: Checkout mman-win32
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        with:
+          repository: 'alitrack/mman-win32'
+          ref: master
+          path: mman-win32
+          
+      - name: Check default run shell
+        run: |
+          git --version
+          which git
+          which bash
+          which make
+      - name: Convert symlink patch files to real file
+        shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
+        run: |
+          cd Media-Transport-Library/patches/dpdk/${{env.DPDK_VERSION}}
+          ls *.patch | xargs -I{} bash -c 'if [[ $(sed -n '1p' "{}") =~ ^../.*\.patch$ ]]; then cp "$(cat "{}")" "{}"; fi'
+          cd windows
+          ls *.patch | xargs -I{} bash -c 'if [[ $(sed -n '1p' "{}") =~ ^../.*\.patch$ ]]; then cp "$(cat "{}")" "{}"; fi'
+          
+      - name: Apply patches for DPDK
+        shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
+        run: |
+          cd dpdk
+          git reset --hard
+          git checkout v${{env.DPDK_VERSION}}
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git am ../Media-Transport-Library/patches/dpdk/${{env.DPDK_VERSION}}/*.patch
+          git am ../Media-Transport-Library/patches/dpdk/${{env.DPDK_VERSION}}/windows/*.patch
+      - name: Build dpdk
+        shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
+        run: |
+          cd dpdk
+          meson setup build
+          meson install -C build
+      - name: Build IMTL lib
+        shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
+        run: |
+          cd Media-Transport-Library
+          meson setup build
+          meson install -C build
+                    
+      - name: Build IMTL app dependency
+        shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
+        run: | 
+         #export PATH=/c/msys64/mingw64/bin:/c/msys64/bin:$PATH
+         cd mman-win32
+          ./configure --prefix=/${MSYSTEM_PREFIX}
+          make -j$(nproc) && make install
+          
+      - name: Build IMTL app
+        shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
+        run: |
+          #export PATH=/c/msys64/mingw64/bin:$PATH
+          cd Media-Transoport-Library/app
+          meson setup build
+          meson compile -C build
+          
+      - name: Build IMTL plugins
+        shell: C:\msys64\mingw64.exe {0}
+        run: |
+          #export PATH=/c/msys64/usr/bin:$PATH
+          cd Media-Transport-Library/plugins
+          meson setup build
+          meson install -C build
+      - name: Build IMTL lib with TAP
+        shell: C:\msys64\mingw64.exe {0}
+        run: |
+          #export PATH=/c/msys64/usr/bin:$PATH
+          cd  Media-Transport-Library
+          meson setup tap_build -Denable_tap=true
+          meson install -C tap_build
