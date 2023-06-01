@@ -19,7 +19,12 @@ jobs:
     defaults:
       run:
         shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
-    steps:     
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Syuu --noconfirm git base-devel unzip
+          pacboy -S openssl:p gcc:p meson:p pkg-config:p json-c:p libpcap:p gtest:p SDL2:p SDL2_ttf:p dlfcn:p
+          
       - name: Checkout IMTL repo
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
