@@ -54,7 +54,7 @@ jobs:
           echo y | pacman -Su --noconfirm git base-devel unzip pactoys
           head -n 2 < <(yes $'yes') | pacboy -S openssl:p gcc:p meson:p pkg-config:p json-c:p libpcap:p gtest:p SDL2:p SDL2_ttf:p dlfcn:p
           # Prevent pkg-config package to be removed (Default: pkgconfig)
-          echo n | pacman -Syuu
+          #echo n | pacman -Syuu
           echo y | pacboy -S binutils:p clang:p diffutils:p libx264:p libva:p ffnvcodec-headers:p nasm:p yasm:p
           
       - name: Convert symlink patch files to real file
