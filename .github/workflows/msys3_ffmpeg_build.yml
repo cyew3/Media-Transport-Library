@@ -19,15 +19,7 @@ jobs:
     defaults:
       run:
         shell: C:/msys64/msys2_shell.cmd -defterm -here -no-start -mingw64 {0}
-    steps:
-      - name: Install dependencies
-        run: |
-          echo y | pacman -Su --noconfirm git base-devel unzip pactoys
-          head -n 2 < <(yes $'yes') | pacboy -S openssl:p gcc:p meson:p pkg-config:p json-c:p libpcap:p gtest:p SDL2:p SDL2_ttf:p dlfcn:p
-          # Prevent pkg-config package to be removed (Default: pkgconfig)
-          echo n | pacman -Syuu
-          echo y | pacboy -S binutils:p clang:p diffutils:p libx264:p libva:p ffnvcodec-headers:p nasm:p yasm:p
-          
+    steps:          
       - name: Checkout IMTL repo
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
@@ -49,13 +41,21 @@ jobs:
           repository: 'alitrack/mman-win32'
           ref: master
           path: mman-win32
+
+      - name: Checkout Cisco H264
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        with:
+          repository: 'cisco/openh264'
+          ref: openh264v2.3.1
+          path: openh264
           
-      - name: Check default run shell
+      - name: Install dependencies
         run: |
-          git --version
-          which git
-          which bash
-          which make
+          echo y | pacman -Su --noconfirm git base-devel unzip pactoys
+          head -n 2 < <(yes $'yes') | pacboy -S openssl:p gcc:p meson:p pkg-config:p json-c:p libpcap:p gtest:p SDL2:p SDL2_ttf:p dlfcn:p
+          # Prevent pkg-config package to be removed (Default: pkgconfig)
+          echo n | pacman -Syuu
+          echo y | pacboy -S binutils:p clang:p diffutils:p libx264:p libva:p ffnvcodec-headers:p nasm:p yasm:p
           
       - name: Convert symlink patch files to real file
         run: |
@@ -79,20 +79,22 @@ jobs:
           cd dpdk
           meson setup build
           meson install -C build
+
+      - name: Copy dpdk eal & kni lib deps to IMTL
+        run: |
+          cd Media-Transport-Library
+          mkdir -p dpdk/lib/eal/windows/include dpdk/lib/kni
+          cp -rf ../dpdk/lib/eal/windows/include/* dpdk/lib/eal/windows/include
+          cp -rf ../dpdk/lib/kni/* dpdk/lib/kni
           
       - name: Build IMTL lib
         run: |
           cd Media-Transport-Library
-          mkdir -p dpdk/lib/eal/windows/include
-          mkdir -p dpdk/lib/kni
-          cp -rf ../dpdk/lib/eal/windows/include/* dpdk/lib/eal/windows/include
-          cp -rf ../dpdk/lib/kni/* dpdk/lib/kni
           meson setup build
           meson install -C build
                     
       - name: Build IMTL app dependency
         run: | 
-         #export PATH=/c/msys64/mingw64/bin:/c/msys64/bin:$PATH
          cd mman-win32
           ./configure --prefix=${MSYSTEM_PREFIX}
           make -j$(nproc) && make install
@@ -116,3 +118,9 @@ jobs:
           cd  Media-Transport-Library
           meson setup tap_build -Denable_tap=true
           meson install -C tap_build
+
+      - name: Build Open H264
+        run: |
+          cd openh264
+          meson build
+          ninja -C build install
