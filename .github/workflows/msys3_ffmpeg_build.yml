@@ -23,8 +23,10 @@ jobs:
       - name: Install dependencies
         run: |
           echo y | pacman -Su --noconfirm git base-devel unzip pactoys
-          pacboy -S openssl:p gcc:p meson:p pkg-config:p json-c:p libpcap:p gtest:p SDL2:p SDL2_ttf:p dlfcn:p
-          pacman -Syuu
+          head -n 2 < <(yes $'yes') | pacboy -S openssl:p gcc:p meson:p pkg-config:p json-c:p libpcap:p gtest:p SDL2:p SDL2_ttf:p dlfcn:p
+          # Prevent pkg-config package to be removed (Default: pkgconfig)
+          echo n | pacman -Syuu
+          echo y | pacboy -S binutils:p clang:p diffutils:p libx264:p libva:p ffnvcodec-headers:p nasm:p yasm:p
           
       - name: Checkout IMTL repo
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
