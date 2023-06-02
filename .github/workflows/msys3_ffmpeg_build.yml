@@ -97,7 +97,7 @@ jobs:
           
       - name: Build IMTL app
         run: |
-          cd Media-Transoport-Library/app
+          cd Media-Transport-Library/app
           meson setup build
           meson compile -C build
           
@@ -109,8 +109,8 @@ jobs:
           
       - name: Build IMTL lib with TAP
         #shell: C:\msys64\mingw64.exe {0}
+        #export PATH=/c/msys64/usr/bin:$PATH
         run: |
-          #export PATH=/c/msys64/usr/bin:$PATH
           cd  Media-Transport-Library
           meson setup tap_build -Denable_tap=true
           meson install -C tap_build
