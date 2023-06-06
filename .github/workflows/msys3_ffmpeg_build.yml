@@ -119,6 +119,16 @@ jobs:
           meson setup tap_build -Denable_tap=true
           meson install -C tap_build
 
+      - name: Fix mingw64 binutils 
+        run: |
+          # Fixes in https://sourceforge.net/p/mingw-w64/mailman/message/29053757/
+          #ls -al /mingw64/bin
+          cp -f /mingw64/bin/ar.exe /mingw64/bin/x86_64-w64-mingw32-ar.exe
+          cp -f /mingw64/bin/dlltool.exe /mingw64/bin/x86_64-w64-mingw32-dlltool.exe
+          cp -f /mingw64/bin/nm.exe /mingw64/bin/x86_64-w64-mingw32-nm.exe
+          cp -f /mingw64/bin/strip.exe /mingw64/bin/x86_64-w64-mingw32-strip.exe
+          cp -f /mingw64/bin/windres.exe /mingw64/bin/x86_64-w64-mingw32-windres.exe
+          
       - name: Build Open H264
         run: |
           cd openh264
