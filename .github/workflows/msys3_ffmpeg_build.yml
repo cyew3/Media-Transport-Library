@@ -49,7 +49,7 @@ jobs:
           ref: openh264v2.3.1
           path: openh264
           
-      - name: Install dependencies
+      - name: Install Pacboy dependencies
         run: |
           echo y | pacman -Su --noconfirm git base-devel unzip pactoys
           head -n 2 < <(yes $'yes') | pacboy -S openssl:p gcc:p meson:p pkg-config:p json-c:p libpcap:p gtest:p SDL2:p SDL2_ttf:p dlfcn:p
@@ -80,7 +80,7 @@ jobs:
           meson setup build
           meson install -C build
 
-      - name: Copy dpdk eal & kni lib deps to IMTL
+      - name: Copy DPDK eal/kni libs to IMTL
         run: |
           cd Media-Transport-Library
           mkdir -p dpdk/lib/eal/windows/include dpdk/lib/kni
