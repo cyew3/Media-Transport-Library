@@ -83,7 +83,7 @@ jobs:
       - name: Copy DPDK eal/kni libs to IMTL
         run: |
           cd Media-Transport-Library
-          mkdir -p dpdk/lib/eal/windows/include dpdk/lib/kni
+          mkdir -p dpdk/lib/eal/windows/include dpdk/lib/kni /c/ffmpeg_github
           cp -rf ../dpdk/lib/eal/windows/include/* dpdk/lib/eal/windows/include
           cp -rf ../dpdk/lib/kni/* dpdk/lib/kni
           
@@ -124,3 +124,26 @@ jobs:
           cd openh264
           meson build
           ninja -C build install
+          
+      - name: Build FFmpeg v4.4
+        run: |
+          cd ffmpeg
+          ./configure --arch=${{matrix.env}} --target-os=${{matrix.sys}} --cross-prefix=${{matrix.arch}}-w64-mingw32- --prefix=/c/ffmpeg_github --enable-shared --enable-nonfree --enable-gpl --disable-lto --enable-pic  --disable-w32threads --enable-mtl --enable-libx264 --enable-libopenh264 --enable-encoder=libopenh264
+          make -j$(nproc)
+          make install
+          cat ffbuild/config.log
+          
+      - name: Archivezip artifacts
+        run: |
+          zip -r libmtl-dll.zip Media-Transport-Library/build/lib
+          
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Intel MTL Library
+          path: libmtl-dll.zip
+      
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Intel FFmpeg v${{env.FFMPEG_VERSION}} ffbuild logs
+          path: ffmpeg/ffbuild/config.log
+       
