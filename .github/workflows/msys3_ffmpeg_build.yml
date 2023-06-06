@@ -155,7 +155,7 @@ jobs:
       
       - uses: actions/upload-artifact@v3
         with:
-          name: Intel MTL enable FFMpeg Windows Release (undistributed/non-free) GPL
+          name: Intel MTL enable FFMpeg Windows Release (undistributed, non-free, GPL)
           path: ffmpeg-windows.zip
           
       - uses: actions/upload-artifact@v3
