@@ -143,6 +143,11 @@ jobs:
           make install
           cat ffbuild/config.log
           
+      - name: Run Intel MTL enabled FFmpeg Windows version
+        run: |
+          cd /c/ffmpeg_github/bin
+          ./ffmpeg -version
+          
       - name: Archivezip artifacts
         run: |
           zip -r libmtl-dll.zip Media-Transport-Library/build/lib
