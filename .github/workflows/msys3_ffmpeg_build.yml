@@ -146,12 +146,18 @@ jobs:
       - name: Archivezip artifacts
         run: |
           zip -r libmtl-dll.zip Media-Transport-Library/build/lib
+          zip -r ffmpeg-windows.zip /c/ffmpeg_github/bin
           
       - uses: actions/upload-artifact@v3
         with:
           name: Intel MTL Library
           path: libmtl-dll.zip
       
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Intel MTL enable FFMpeg Windows Release (undistributed/non-free) GPL
+          path: ffmpeg-windows.zip
+          
       - uses: actions/upload-artifact@v3
         with:
           name: Intel FFmpeg v${{env.FFMPEG_VERSION}} ffbuild logs
