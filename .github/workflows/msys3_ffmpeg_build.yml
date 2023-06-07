@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - .github/workflows/msys3_ffmpeg_build.yml
+  workflow_call:
+  
 env:
   DPDK_VERSION: 23.03
   FFMPEG_VERSION: 4.4
